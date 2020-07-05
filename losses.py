@@ -3,47 +3,19 @@ from __future__ import print_function
 import torch
 import torch.nn as nn
 
-class NT_Xent(nn.Module):
-    def __init__(self, batch_size, temperature, device):
-        super(NT_Xent, self).__init__()
-        self.batch_size = batch_size
-        self.temperature = temperature
-        self.mask = self.mask_correlated_samples(batch_size)
-        self.device = device
+'''
+def multiclass_npairs_loss(z, y):
+    z: hidden vector of shape [bsz, n_features]
+    y: ground truth of shape [bsz]
 
-        self.criterion = nn.CrossEntropyLoss(reduction="sum")
-        self.similarity_f = nn.CosineSimilarity(dim=2)
+'''
 
-    def mask_correlated_samples(self, batch_size):
-        mask = torch.ones((batch_size * 2, batch_size * 2), dtype=bool)
-        mask = mask.fill_diagonal_(0)
-        for i in range(batch_size):
-            mask[i, batch_size + i] = 0
-            mask[batch_size + i, i] = 0
-        return mask
+'''
+for a set of N  randomly sampled image/label paris, the corresponding minibatch used for  training consists of 2N pairs. 
+x_2k and x_(2k-1) are two random augmentations of x_k
+y_(2k-1) = y_(2k) = y_k
+'''
 
-    def forward(self, z_i, z_j):
-        """
-        We do not sample negative examples explicitly.
-        Instead, given a positive pair, similar to (Chen et al., 2017), we treat the other 2(N − 1) augmented examples within a minibatch as negative examples.
-        """
-
-        p1 = torch.cat((z_i, z_j), dim=0)
-        sim = self.similarity_f(p1.unsqueeze(1), p1.unsqueeze(0)) / self.temperature
-
-        sim_i_j = torch.diag(sim, self.batch_size)
-        sim_j_i = torch.diag(sim, -self.batch_size)
-
-        positive_samples = torch.cat((sim_i_j, sim_j_i), dim=0).reshape(
-            self.batch_size * 2, 1
-        )
-        negative_samples = sim[self.mask].reshape(self.batch_size * 2, -1)
-
-        labels = torch.zeros(self.batch_size * 2).to(self.device).long()
-        logits = torch.cat((positive_samples, negative_samples), dim=1)
-        loss = self.criterion(logits, labels)
-        loss /= 2 * self.batch_size
-        return loss
 
 class SupConLoss(nn.Module):
 
@@ -53,9 +25,7 @@ class SupConLoss(nn.Module):
         self.base_temperature = base_temperature
 
     def forward(self, features, labels, mask):
-        """Compute loss for model. If both `labels` and `mask` are None,
-        it degenerates to SimCLR unsupervised loss:
-
+        """
         Args:
             features: hidden vector of shape [bsz, n_views, ...].
             labels: ground truth of shape [bsz].
@@ -94,8 +64,9 @@ class SupConLoss(nn.Module):
         # for numerical stability
         #torch.max(input)->Tensor 
         #returns the maximum value  of all elements in the input tensor
-        logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
-        logits = anchor_dot_contrast - logits_max.detach()
+        '''logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
+        logits = anchor_dot_contrast - logits_max.detach()'''
+        logits = achor_dot_contrast
         #detach:  declared not  to  need gradient 
 
         # tile mask
@@ -104,6 +75,11 @@ class SupConLoss(nn.Module):
         mask = mask.repeat(anchor_count, contrast_count)
         # mask-out self-contrast cases
        
+       '''
+       torch.scatter
+       torch.ones_like
+       torch.arange
+       '''
         logits_mask = torch.scatter(
             torch.ones_like(mask),
             1,
