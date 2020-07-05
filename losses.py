@@ -3,26 +3,25 @@ from __future__ import print_function
 import torch
 import torch.nn as nn
 
-'''
-def multiclass_npairs_loss(z, y):
+
+"""def multiclass_npairs_loss(z, y):
     z: hidden vector of shape [bsz, n_features]
-    y: ground truth of shape [bsz]
+    y: ground truth of shape [bsz] batch size """
 
-'''
-
-'''
+"""
 for a set of N  randomly sampled image/label paris, the corresponding minibatch used for  training consists of 2N pairs. 
 x_2k and x_(2k-1) are two random augmentations of x_k
 y_(2k-1) = y_(2k) = y_k
-'''
-
+"""
+"""
+features = model(images)
+"""
 
 class SupConLoss(nn.Module):
 
-    def __init__(self, temperature=0.07,base_temperature=0.07):
+    def __init__(self, temperature=0.07):
         super(SupConLoss, self).__init__()
         self.temperature = temperature
-        self.base_temperature = base_temperature
 
     def forward(self, features, labels, mask):
         """
@@ -76,6 +75,7 @@ class SupConLoss(nn.Module):
         # mask-out self-contrast cases
        
        '''
+       mask-out self-contrast cases
        torch.scatter
        torch.ones_like
        torch.arange
@@ -96,7 +96,7 @@ class SupConLoss(nn.Module):
         mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1)
 
         # loss
-        loss = - (self.temperature / self.base_temperature) * mean_log_prob_pos
+        loss = -mean_log_prob_pos
         loss = loss.view(anchor_count, batch_size).mean()
 
         return loss
