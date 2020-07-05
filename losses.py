@@ -34,10 +34,17 @@ class SupConLoss(nn.Module):
             A loss scalar.
         """
         batch_size = features.shape[0]
+
+        '''for Simclr,
+        mask = torch.eye(batch_size, dtype=torch.float32).to(device)
+        returns a  2-D tensor  with ones on the  diagonal and zeros elsewhere)
+        '''
+
         #contiguous(): returns itself if input tensor is already contiguous, otherwise it returns a new contiguous tensor by copying  data 
         labels = labels.contiguous().view(-1, 1)
         #view(*shape): returns a new tensor with the same data  as the self tensor but of  a different shape (the size -1 is inferred form other dimensions)
         mask = torch.eq(labels, labels.T).float().to(device)
+        '''indicator  function: calculate only those labels are same'''
         #T: is this  tensor with its dimensions reversed 
         #torch.eq(input, other, out=None): computes element-wise equality 
         #returns a torch.BoolTensor containing  a True at each location  where  comparison is true  
@@ -54,6 +61,7 @@ class SupConLoss(nn.Module):
         # compute logits
         #torch.div(input, other, out=None) -> Tensor
         #divides each element of input input with the scalar  other and returns a new resulting tensor  
+        '''anchor_feature, contrast_feature'''
         anchor_dot_contrast = torch.div(
             torch.matmul(anchor_feature, contrast_feature.T),
             self.temperature)

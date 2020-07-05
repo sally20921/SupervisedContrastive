@@ -15,3 +15,9 @@ python3 main_supcon.py
 ```
 python3 main_linear.py 
 ```
+
+### torch.nn.BCEWithLogitsLoss
+- this loss  combines a sigmoid layer and the BCELoss in one single class 
+- more numerically stable 
+- take advantage  of log-sum-exp trick for numerical stability
+- parameters : reduction ('mean': the sum of the  output will be  divided by the  number of elements in the output, 'sum': the  output will be  summed)
