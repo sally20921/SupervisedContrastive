@@ -21,3 +21,6 @@ python3 main_linear.py
 - more numerically stable 
 - take advantage  of log-sum-exp trick for numerical stability
 - parameters : reduction ('mean': the sum of the  output will be  divided by the  number of elements in the output, 'sum': the  output will be  summed)
+- "with  logit": it means that you are applying a softmax function to logit  numbers to normalize it 
+- "logit": the vector  of raw (non-normalized) predictions that a classification model generates, which is ordinarily then passes to a  normalization function.
+-  logits typically become an input  to the softmax function 

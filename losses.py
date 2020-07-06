@@ -84,9 +84,9 @@ class SupConLoss(nn.Module):
        
        '''
        mask-out self-contrast cases
-       torch.scatter
-       torch.ones_like
-       torch.arange
+       torch.scatter(dim, index, src): write all values from  tensor  src into  self at  the  indices specified in  the  index tnesor. 
+       torch.ones_like: returns a tensor filled with the scalar value 1, with the  same size as input
+       torch.arange: returns a 1-D tensor with values from interval [start, end) with step size beginning  from start
        '''
         logits_mask = torch.scatter(
             torch.ones_like(mask),
