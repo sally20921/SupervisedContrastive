@@ -23,4 +23,15 @@ python3 main_linear.py
 - parameters : reduction ('mean': the sum of the  output will be  divided by the  number of elements in the output, 'sum': the  output will be  summed)
 - "with  logit": it means that you are applying a softmax function to logit  numbers to normalize it 
 - "logit": the vector  of raw (non-normalized) predictions that a classification model generates, which is ordinarily then passes to a  normalization function.
--  logits typically become an input  to the softmax function 
+-  logits typically become an input  to the softmax function
+
+### cross-entropy loss
+- KL-divergence  between two  discrete distributions: the  label distribution ( a discrete distribution of 1-hot vectors) and the  empirical distribution of logits
+- each class is assigned a target (usually 1-hot) vetor and the  logits at the last layer of the  network, after  a softmax transformation, are  gradually transformed towards the  target vector 
+
+###  contrastive loss
+ -  for a given anchor point, the  first  force  pulls the anchor closer  in representation space to other points 
+- second force  pushes the anchor  farther away form other points  
+- computes  the  inner (dot) product between the  normalized vectors z-i and z-j(i) in 128 dimensional space 
+-  the denominator has a  total  of  2n-1 terms 
+- for any i, the encoder is tuned to maximize  the  numerator of the log argument  while simultaneously minimizing  its denominator 
