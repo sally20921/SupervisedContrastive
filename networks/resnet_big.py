@@ -28,8 +28,13 @@ class BasicBlock(nn.Module):
             )
 
     def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(out))
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out =  F.relu(out)
+        
+        out = self.conv2(out)
+        out = self.bn2(out)
+        
         out += self.shortcut(x)
         preact = out
         out = F.relu(out)
@@ -60,9 +65,18 @@ class Bottleneck(nn.Module):
             )
 
     def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = F.relu(self.bn2(self.conv2(out)))
-        out = self.bn3(self.conv3(out))
+        
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = F.relu(out)
+        
+        out = self.conv2(out)
+        out  = self.bn2(out)
+        out = F.relu(out)
+        
+        out = self.conv3(out)
+        out = self.bn3(out)
+       
         out += self.shortcut(x)
         preact = out
         out = F.relu(out)
