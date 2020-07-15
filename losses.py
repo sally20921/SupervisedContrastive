@@ -4,13 +4,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-
+'''
 def cross_entropy(logits, target, size_average=True):
     if size_average:
         return torch.mean(torch.sum(-target*F.log_softmax(logits, -1), -1))
     else:
         return torch.sum(torch.sum(-target*F.log_softmax(logits, -1), -1))
-
+'''
+'''
 class NpairLoss(nn.Module):
      """
         Calculates N-Pair loss
@@ -19,11 +20,12 @@ class NpairLoss(nn.Module):
         :param negatives: A torch.Tensor, (n, n-1, embedding_size)
         :return: A scalar
         """
+
     def __init__(self, l2_reg = 0.02):
         super(NpairLoss, self).__init__()
         self.l2_reg = l2_reg
     def forward(self, anchor, positive, target):
-        '''ibatch_size = anchor.size(0)
+        batch_size = anchor.size(0)
         target = target.view(target.size(0), 1)
 `       
         target = (target == torch.transpose(target, 0, 1)).float()
@@ -34,7 +36,7 @@ class NpairLoss(nn.Module):
         l2_loss = torch.sum(anchor**2) / batch_size + torch.sum(positive**2) / batch_size
 
         loss = loss_ce + self.l2_reg*l2_loss*0.25
-        return loss'''
+        return loss
         anchors = torch.unsqueeze(anchors, dim=1) #(n,1,embedding_size)
         positives = torch.unsqueeze(positives, dim=1) #(n,1,embedding_size)
 
@@ -42,7 +44,7 @@ class NpairLoss(nn.Module):
         x = torch.sum(torch.exp(x),2) #(n,1)
         loss = torch.mean(torch.log(1+x))
         return loss 
-
+'''
 """def multiclass_npairs_loss(z, y):
     z: hidden vector of shape [bsz, n_features]
     y: ground truth of shape [bsz] batch size """
@@ -120,15 +122,15 @@ class SupConLoss(nn.Module):
         #repeat(*size)->Tensor
         #repeats this tensor along the specified dimensions
         mask = mask.repeat(anchor_count, contrast_count)
-        # mask-out self-contrast cases
-       
-       '''
+        # mask-out self-contrast cases       
+'''
        mask-out self-contrast cases
        torch.scatter(dim, index, src): write all values from  tensor  src into  self at  the  indices specified in  the  index tnesor. 
        torch.ones_like: returns a tensor filled with the scalar value 1, with the  same size as input
        torch.arange: returns a 1-D tensor with values from interval [start, end) with step size beginning  from start
-       '''
-        logits_mask = torch.scatter(
+'''
+
+       logits_mask = torch.scatter(
             torch.ones_like(mask),
             1,
             torch.arange(batch_size * anchor_count).view(-1, 1).to(device),
