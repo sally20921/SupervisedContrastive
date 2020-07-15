@@ -1,4 +1,4 @@
-from __future__ import print_function 
+from __future__ import print_function
 
 import torch
 import torch.nn as nn
@@ -20,7 +20,6 @@ class NpairLoss(nn.Module):
         :param negatives: A torch.Tensor, (n, n-1, embedding_size)
         :return: A scalar
         """
-
     def __init__(self, l2_reg = 0.02):
         super(NpairLoss, self).__init__()
         self.l2_reg = l2_reg
@@ -30,16 +29,13 @@ class NpairLoss(nn.Module):
 `       
         target = (target == torch.transpose(target, 0, 1)).float()
         target = target / torch.sum(target, dim=1, keepdim=True).float()
-
         logit = torch.matmul(anchor, torch.transpose(positive, 0, 1))
         loss_ce = cross_entropy(logit, target)
         l2_loss = torch.sum(anchor**2) / batch_size + torch.sum(positive**2) / batch_size
-
         loss = loss_ce + self.l2_reg*l2_loss*0.25
         return loss
         anchors = torch.unsqueeze(anchors, dim=1) #(n,1,embedding_size)
         positives = torch.unsqueeze(positives, dim=1) #(n,1,embedding_size)
-
         x = torch.matmul(anchors, (negatives-positives).transpose(1,2)) #(n, 1, n-1)
         x = torch.sum(torch.exp(x),2) #(n,1)
         loss = torch.mean(torch.log(1+x))
@@ -98,7 +94,7 @@ class SupConLoss(nn.Module):
 
         anchor_feature = contrast_feature
         anchor_count = contrast_count
-               
+
         # compute logits
         #torch.div(input, other, out=None) -> Tensor
         #divides each element of input input with the scalar  other and returns a new resulting tensor  
@@ -115,7 +111,7 @@ class SupConLoss(nn.Module):
         #returns the maximum value  of all elements in the input tensor
         '''logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
         logits = anchor_dot_contrast - logits_max.detach()'''
-        logits = achor_dot_contrast
+        logits = anchor_dot_contrast
         #detach:  declared not  to  need gradient 
 
         # tile mask(or mask1) 
@@ -123,14 +119,8 @@ class SupConLoss(nn.Module):
         #repeats this tensor along the specified dimensions
         mask = mask.repeat(anchor_count, contrast_count)
         # mask-out self-contrast cases       
-'''
-       mask-out self-contrast cases
-       torch.scatter(dim, index, src): write all values from  tensor  src into  self at  the  indices specified in  the  index tnesor. 
-       torch.ones_like: returns a tensor filled with the scalar value 1, with the  same size as input
-       torch.arange: returns a 1-D tensor with values from interval [start, end) with step size beginning  from start
-'''
 
-       logits_mask = torch.scatter(
+        logits_mask = torch.scatter(
             torch.ones_like(mask),
             1,
             torch.arange(batch_size * anchor_count).view(-1, 1).to(device),
@@ -150,3 +140,11 @@ class SupConLoss(nn.Module):
         loss = loss.view(anchor_count, batch_size).mean()
 
         return loss
+'''
+       mask-out self-contrast cases
+       torch.scatter(dim, index, src): write all values from  tensor  src into  self at  the  indices specified in  the  index tnesor. 
+       torch.ones_like: returns a tensor filled with the scalar value 1, with the  same size as input
+       torch.arange: returns a 1-D tensor with values from interval [start, end) with step size beginning  from start
+'''
+
+
