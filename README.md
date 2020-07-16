@@ -9,7 +9,7 @@
 
 ## Pretraining stage:
 ```
-python3 main_supcon.py 
+python3 main_embed.py 
 ```
 ## Linear evaluation stage: 
 ```
